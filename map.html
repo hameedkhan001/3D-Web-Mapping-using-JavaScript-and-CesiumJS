@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <link rel="stylesheet" type="text/css" href="./style.css" />
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="./libs/Cesium-1.108/Build/Cesium/Cesium.js"></script>
+  <script src="./libs/Cesium-1.108/Apps/Sandcastle/Sandcastle-header.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.js"
+    integrity="sha512-rozBdNtS7jw9BlC76YF1FQGjz17qQ0J/Vu9ZCFIW374sEy4EZRbRcUZa2RU/MZ90X2mnLU56F75VfdToGV0RiA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="./fontawesome-free-6.1.2-web/css/all.css" />
+  <style>
+    @import url(localhost:8080/3d/libs/Cesium-1.110/Apps/Sandcastle/CesiumSandcastle.css);
+
+    @import url(localhost:8080/3d/libs/Cesium-1.110/Apps/Sandcastle/templates/bucket.css);
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer" class="fullSize"></div>
+  <script type="text/javascript">
+
+    var viewer = new Cesium.Viewer("cesiumContainer", {
+      shouldAnimate: true,
+    });
+    // Load and display GeoJSON data with extrusion
+
+    // var bidenSource = Cesium.GeoJsonDataSource.load("buildings.geojson", {
+    //   stroke: new Cesium.Color(1.0, 0.0, 0.0, 1.0), // Black color with full opacity
+    //   strokeWidth: 40.0, // Increase the stroke width to 20.0 (or any other value you prefer)
+    //   fill: new Cesium.Color(0.0, 0.0, 1.0, 0.5), // Blue color with 50% transparency
+    //   extrudedHeight: 0.1, // Adjust the extrusion height as needed
+    // });
+
+    // var trumpSource = Cesium.GeoJsonDataSource.load("polygons.geojson", {
+    //   stroke: new Cesium.Color(0.0, 1.0, 0.0, 1.0), // Black color with full opacity
+    //   strokeWidth: 40.0, // Increase the stroke width to 3.0
+    //   fill: new Cesium.Color(1.0, 0.0, 0.0, 0.5), // Red color with 50% transparency
+    //   extrudedHeight: 0.1, // Adjust the extrusion height as needed
+    // });
+
+
+    // viewer.dataSources.add(bidenSource);
+    // viewer.dataSources.add(trumpSource);
+
+    // County Boundry
+    var boundrySource = Cesium.GeoJsonDataSource.load("road.geojson", {
+      stroke: Cesium.Color.BLACK, // Change stroke color to black
+      strokeWidth: 5,
+      fill: Cesium.Color.BLACK.withAlpha(0.5), // Change fill color to black with 50% transparency
+      extrudedHeight: 0.1,
+    });
+    viewer.dataSources.add(boundrySource);
+
+
+
+    // // Building Geojson data display
+    Cesium.GeoJsonDataSource.load("building.geojson", {
+      stroke: Cesium.Color.BLACK,
+      fill: Cesium.Color.PURPLE, // Change the fill color to purple
+      extrudedHeight: 9 // Adjust the extrusion height as needed
+    })
+      .then(function (dataSource) {
+        viewer.dataSources.add(dataSource);
+
+        var entities = dataSource.entities.values;
+
+        for (var i = 0; i < entities.length; i++) {
+          var entity = entities[i];
+          entity.polygon.material = Cesium.Color.PURPLE; // Set polygon material to purple
+          entity.polygon.outline = false;
+          entity.polygon.extrudedHeight = 5; // Set the extruded height, you can also use entity.properties.Height if needed
+        }
+      });
+
+    //extrude polygons//
+
+    // // Building Geojson data display
+    Cesium.GeoJsonDataSource.load("polygon.geojson", {
+  stroke: Cesium.Color.BLACK,
+  fill: Cesium.Color.BLUE, // Change the fill color to blue
+  extrudedHeight: 3 // Adjust the extrusion height as needed
+})
+.then(function(dataSource) {
+  viewer.dataSources.add(dataSource);
+
+  var entities = dataSource.entities.values;
+
+  for (var i = 0; i < entities.length; i++) {
+    var entity = entities[i];
+    entity.polygon.material = Cesium.Color.BLUE; // Set polygon material to blue
+    entity.polygon.outline = false;
+    entity.polygon.extrudedHeight = 3; // Set the extruded height, you can also use entity.properties.Height if needed
+  }
+});
+
+
+
+viewer.camera.setView({
+  destination: Cesium.Rectangle.fromDegrees(28.0865, 36.0884, 28.1941, 36.1939), // Lindos, Greece bounding box
+  // Add any other camera settings here, like orientation, heading, pitch, etc.
+});
+
+  </script>
+</body>
+
+</html>
